@@ -120,6 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+*env
 .env
 .venv
 env/
@@ -169,3 +170,4 @@ Desktop.ini
 # Игнорирование кэш файлов на Mac
 .DS_Store
 
+*.log

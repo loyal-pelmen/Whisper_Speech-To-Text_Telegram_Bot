@@ -1,0 +1,5 @@
+aiogram
+python-dotenv
+openai
+soundfile
+pydub
