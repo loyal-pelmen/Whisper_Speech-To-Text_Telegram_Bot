@@ -171,3 +171,4 @@ Desktop.ini
 .DS_Store
 
 *.log
+.vscode/
