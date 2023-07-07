@@ -1,5 +1,6 @@
 aiogram
-python-dotenv
 openai
 soundfile
 pydub
+ujson
+moviepy
