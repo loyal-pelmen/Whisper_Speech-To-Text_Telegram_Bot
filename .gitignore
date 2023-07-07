@@ -120,7 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-*env
+
 .env
 .venv
 env/
@@ -172,3 +172,5 @@ Desktop.ini
 
 *.log
 .vscode/
+config.json
+voices/

@@ -5,8 +5,7 @@ import handlers
 
 
 if __name__ == "__main__":
-    #Условия дальше уникальны, так что для дргих токенов нужны другие настройки
-    if WEBHOOK:   #Если оканчитается на Е, делаю через polling
+    if WEBHOOK:
         start_webhook(
         dispatcher=dp,
         webhook_path=WEBHOOK_PATH,

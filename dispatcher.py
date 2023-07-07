@@ -2,11 +2,15 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from filters import IsOwner, IsUser
-from config import BOT_TOKEN, WEBHOOK_HOST, WEBHOOK, MAXCONNECTIONS, UPDATESPENDING
+from logging.handlers import RotatingFileHandler
+from config import BOT_TOKEN, WEBHOOK_HOST, WEBHOOK, MAXCONNECTIONS, UPDATESPENDING, LOG_LEVEL
 
 
 # Настроить ведение журнала
-logging.basicConfig(level=logging.DEBUG, filename='app.log')
+logging.basicConfig(level=LOG_LEVEL, filename='app.log')
+handler = RotatingFileHandler('app.log', maxBytes=102400, backupCount=1)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
 
 
 # предпосылки
