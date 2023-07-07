@@ -36,7 +36,7 @@ async def cmd_ping_bot(message: types.Message):
 async def who_is_users(message: types.Message):
     pre_msg = config['ALLOWED_IDS']
     await message.delete()
-    await message.answer(text=', '.join(pre_msg))
+    await message.answer(text=str(pre_msg)[1:-1])
 
 
 
