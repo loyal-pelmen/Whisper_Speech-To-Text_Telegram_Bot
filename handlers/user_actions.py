@@ -15,7 +15,7 @@ from utils.my_utils import remove_token, split_text, send_err_log
 
 
 
-@dp.message_handler(IsUser, commands='start')
+@dp.message_handler(IsUser(), commands='start')
 @dp.async_task
 async def start(msg: types.Message):
     await msg.delete()
@@ -35,7 +35,7 @@ async def voice_message_handle(message: types.Message):
                 openai.api_key = i
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     tmp_dir = Path('./voices')
-                    voice_ogg_path = tmp_dir / f"{message.from_id}voice.ogg"
+                    voice_ogg_path = tmp_dir / f"{message.from_id}-{message.message_id}voice.ogg"
 
 
 
@@ -44,7 +44,7 @@ async def voice_message_handle(message: types.Message):
                     await voice_file.download(voice_ogg_path)
 
                     # convert to mp3
-                    voice_mp3_path = tmp_dir / f"{message.from_id}voice.mp3"
+                    voice_mp3_path = tmp_dir / f"{message.from_id}-{message.message_id}voice.mp3"
                     pydub.AudioSegment.from_file(voice_ogg_path).export(voice_mp3_path, format="mp3")
                     # transcribe
                     with open(voice_mp3_path, "rb") as f:
@@ -70,7 +70,7 @@ async def voice_message_handle(message: types.Message):
             if ValueError("transcribed_text=None"):
                 pass
             if f'{e}' == 'You exceeded your current quota, please check your plan and billing details.':    #Нет токенов на ключе API
-                await send_err_log(f'Whisperbot: Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
+                await send_err_log(f'Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
                 await remove_token(i)  #Удаляем ключ api из списка
                 n = 1   #Действие не удалось
                 continue
@@ -88,8 +88,8 @@ async def voice_message_handle(message: types.Message):
             try:
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     tmp_dir = Path('./voices')
-                    voice_ogg_path = tmp_dir / f"{message.from_id}voice.ogg"
-                    voice_mp3_path = tmp_dir / f"{message.from_id}voice.mp3"
+                    voice_ogg_path = tmp_dir / f"{message.from_id}-{message.message_id}voice.ogg"
+                    voice_mp3_path = tmp_dir / f"{message.from_id}-{message.message_id}voice.mp3"
 
                 os.remove(voice_ogg_path)
                 os.remove(voice_mp3_path)
@@ -110,7 +110,7 @@ async def video_message_handle(message: types.Message):
                 openai.api_key = i
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     tmp_dir = Path('./voices')
-                    videonote_path = tmp_dir / f"{message.from_id}video_note.mp4"
+                    videonote_path = tmp_dir / f"{message.from_id}-{message.message_id}video_note.mp4"
 
 
 
@@ -118,7 +118,7 @@ async def video_message_handle(message: types.Message):
                     voice_file = await bot.get_file(message.video_note.file_id)
                     await voice_file.download(videonote_path)
                     # convert to mp3
-                    audio_path = tmp_dir / f"{message.from_id}audio_note.mp3"
+                    audio_path = tmp_dir / f"{message.from_id}-{message.message_id}audio_note.mp3"
                     video = VideoFileClip(str(videonote_path))
                     video.audio.write_audiofile(audio_path) # type: ignore
 
@@ -148,7 +148,7 @@ async def video_message_handle(message: types.Message):
             if ValueError("transcribed_text=None"):
                 pass
             if f'{e}' == 'You exceeded your current quota, please check your plan and billing details.':    #Нет токенов на ключе API
-                await send_err_log(f'Whisperbot: Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
+                await send_err_log(f'Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
                 await remove_token(i)  #Удаляем ключ api из списка
                 n = 1   #Действие не удалось
                 continue
@@ -166,9 +166,9 @@ async def video_message_handle(message: types.Message):
             try:
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     tmp_dir = Path('./voices')
-                    audio_path = tmp_dir / f"{message.from_id}audio_note.mp3"
+                    audio_path = tmp_dir / f"{message.from_id}-{message.message_id}audio_note.mp3"
 
-                videonote_path = tmp_dir / f"{message.from_id}video_note.mp4"
+                videonote_path = tmp_dir / f"{message.from_id}-{message.message_id}video_note.mp4"
                 os.remove(videonote_path)
                 os.remove(audio_path)
             except:

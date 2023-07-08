@@ -1,6 +1,6 @@
 import logging
 import sys
-from dispatcher import stop
+from dispatcher import stop, bot
 from os import execl
 from config import config
 from aiogram import Bot
@@ -15,6 +15,7 @@ async def confupdate():
 
 async def remove_token(token:str):
     config['OPENAI_TOKENS'].remove(token)
+    await confupdate()
 
 
 def split_text(text:str, chunk_size:int) -> list[str]:
@@ -32,8 +33,11 @@ def split_text(text:str, chunk_size:int) -> list[str]:
 async def send_err_log(message):
     " Отправляем сообщение в бот с логами"
     try:
+        info = await bot.get_me()
+        name = str(info['name'])
+        last_name = str(info['last_name'])
         for id in config['OWNERS_IDS']:
-            await Bot(str(config['LOG_BOT_TOKEN'])).send_message(chat_id=id, text=message)
+            await Bot(f"{name + ' ' + last_name}: " + str(config['LOG_BOT_TOKEN'])).send_message(chat_id=id, text=message)
     except:
         pass
 
