@@ -18,4 +18,4 @@ MAXCONNECTIONS = int(config['MAXCONNECTIONS'])
 
 OPENAI_TOKENS = list(config['OPENAI_TOKENS'])
 
-LOG_LEVEL = str(config['LOG_LEVEL'])
+LOG_LEVEL = str(config['LOG_LEVEL']).upper()
