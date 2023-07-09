@@ -24,6 +24,8 @@ async def help(msg: types.Message):
 /gitback - возвращает версию на n версий назад от последней.
 /log - отправляет файл с логами.
 /cleanlog - очищает файл с логами.
+/changelogbot - добавляет или изменяет ключ для бота с логами.
+/rlogbot - удаляет бота с логами.
 /ping - проверка доступности бота.
 /users - отправляет список пользователей.
 /addusers - добавляет пользователей.
@@ -264,7 +266,7 @@ async def num_of_tokens(message: types.Message):
 @dp.async_task
 async def print_tokens(message: types.Message):
     await message.delete()
-    await message.answer(text=str(api)[1:-1])
+    await message.answer(text=', '.join(api))
 
 
 
@@ -310,3 +312,37 @@ async def remome_tokens(message: types.Message):
         await message.answer('Лишние токены удалены!')
     else:
         await message.answer('Для того, чтобы воспользоваться этой функцией, сделайте отступ и добавьте токены через запятую.')
+
+
+@dp.message_handler(IsOwner(), commands=['changelogbot'])
+@dp.async_task
+async def change_log_bot(message: types.Message):
+    try:
+        await message.delete()
+        text = (message.text[13:]).strip()
+        one = not (',' in text)
+
+        if text:
+            if one:
+                text = text.strip()
+                config['LOG_BOT_TOKEN'] = text
+                await confupdate()
+                await message.answer('Токен успешно изменён!')
+            else:
+                await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
+
+            
+        else:
+            await message.answer('Для того, чтобы воспользоваться этой функцией, сделайте отступ и добавьте ключ для телеграм бота.')
+    except:
+        await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
+
+
+
+@dp.message_handler(IsOwner(), commands=['rlogbot'])
+@dp.async_task
+async def remove_log_bot(message: types.Message):
+    await message.delete()
+    config['LOG_BOT_TOKEN'] = ""
+    await confupdate()
+    await message.answer('Ключ для бота с логами удалён.')
