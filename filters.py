@@ -10,9 +10,7 @@ class IsOwner(BoundFilter):
 
     async def check(self, message: Message) -> bool:
         if config.OWNERS_IDS:
-            return message.from_user.id in config.OWNERS_IDS or message.sender_chat.id in config.OWNERS_IDS
-        elif 1 in config.OWNERS_IDS:
-            return True
+            return message.from_id in config.OWNERS_IDS or message.from_id in config.OWNERS_IDS or 1 in config.OWNERS_IDS
         else:
             return False
 
@@ -25,8 +23,6 @@ class IsUser(BoundFilter):
 
     async def check(self, message: Message) -> bool:
         if config.ALLOWED_IDS:
-            return message.from_user.id in config.ALLOWED_IDS or message.from_user.id in config.OWNERS_IDS or message.sender_chat.id in config.ALLOWED_IDS or 1 in config.OWNERS_IDS or message.sender_chat.id in config.OWNERS_IDS
-        elif 1 in config.ALLOWED_IDS:
-            return True
+            return message.from_id in config.ALLOWED_IDS or message.from_id in config.OWNERS_IDS or 1 in config.OWNERS_IDS or message.from_id in config.OWNERS_IDS
         else:
             return False

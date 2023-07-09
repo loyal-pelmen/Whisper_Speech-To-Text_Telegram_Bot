@@ -10,6 +10,31 @@ from utils.my_utils import restart, confupdate
 api = config['OPENAI_TOKENS']
 
 
+@dp.message_handler(IsOwner(), commands='help')
+@dp.async_task
+async def help(msg: types.Message):
+    await msg.delete()
+    await msg.answer(f'''
+<b>Запишите голосовое или видеосообщение и бот пришлёт расшифровку.</b>
+    
+<b>Финкции для Админов:</b>
+
+/restart - перезапуск бота.
+/gitupdate - обновляет бота до последней версии.
+/gitback - возвращает версию на n версий назад от последней.
+/log - отправляет файл с логами.
+/cleanlog - очищает файл с логами.
+/ping - проверка доступности бота.
+/users - отправляет список пользователей.
+/addusers - добавляет пользователей.
+/rusers - удаляет пользователей.
+/admins - отправляет список админов.
+/addadmins - добавляет админов.
+/radmins - удаляет админов.
+/tokens - отправляет количество токенов.
+/printtokens - отправляет список токенов.
+/addtokens - добавляет токены.
+/rtokens - удаляет токены.''', parse_mode='HTML')
 
 
 
@@ -192,16 +217,19 @@ async def rollback_bot(message: types.Message):
     await message.delete()
     text = ((message.text)[8:]).strip()
 
-    if text:
+    if not text:
         await message.answer('Чтобы использовать эту команду, сделайте отступ от /gitback и укажите, на сколко версий назад вы хотите вернуться. Будьте осторожны! Откат на некоторые версии могут привести к неработоспособности бота.')
     else:
-        m = await message.answer('Выполняю команду...')
-        run(['git', 'fetch'])
-        run(['git', 'reset', '--hard', 'origin/main'])
-        call(['git', 'reset', '--hard', f'HEAD~{text}'])
-        await m.edit_text('Бот вернулся к предыдущей версии, перезапуск...')
-        # перезапуск программы
-        await restart()
+        if text.isdigit():
+            m = await message.answer('Выполняю команду...')
+            run(['git', 'fetch'])
+            run(['git', 'reset', '--hard', 'origin/main'])
+            call(['git', 'reset', '--hard', f'HEAD~{text}'])
+            await m.edit_text('Бот вернулся к предыдущей версии, перезапуск...')
+            # перезапуск программы
+            await restart()
+        else:
+            await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
 
 
 

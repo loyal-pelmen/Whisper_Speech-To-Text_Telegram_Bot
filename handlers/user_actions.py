@@ -23,6 +23,14 @@ async def start(msg: types.Message):
 
 
 
+@dp.message_handler(IsUser(), commands='help')
+@dp.async_task
+async def help(msg: types.Message):
+    await msg.delete()
+    await msg.answer(f'''<b>Запишите голосовое или видеосообщение и бот пришлёт расшифровку.</b>''', parse_mode='HTML')
+
+
+
 
 
 @dp.message_handler(IsUser(), content_types=[types.ContentType.VOICE])
@@ -67,13 +75,15 @@ async def voice_message_handle(message: types.Message):
                 break
                 
         except Exception as e:
-            if ValueError("transcribed_text=None"):
-                pass
+
             if f'{e}' == 'You exceeded your current quota, please check your plan and billing details.':    #Нет токенов на ключе API
                 await send_err_log(f'Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
                 await remove_token(i)  #Удаляем ключ api из списка
                 n = 1   #Действие не удалось
                 continue
+            if f'{e}' == 'File is too big':
+                await message.reply(text='Файл слишком большой')
+
 
 
             if OPENAI_TOKENS.index(i) != len(OPENAI_TOKENS) - 1:
@@ -145,13 +155,13 @@ async def video_message_handle(message: types.Message):
                 break
                 
         except Exception as e:
-            if ValueError("transcribed_text=None"):
-                pass
             if f'{e}' == 'You exceeded your current quota, please check your plan and billing details.':    #Нет токенов на ключе API
                 await send_err_log(f'Удаляю токен {i}. Добавь новых токенов!!!')   #Оповещдаем админа о том, что удадлили api клююч и нам нужен новый
                 await remove_token(i)  #Удаляем ключ api из списка
                 n = 1   #Действие не удалось
                 continue
+            if f'{e}' == 'File is too big':
+                await message.reply(text='Файл слишком большой')
 
 
             if OPENAI_TOKENS.index(i) != len(OPENAI_TOKENS) - 1:

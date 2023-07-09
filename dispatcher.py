@@ -49,7 +49,7 @@ async def start(dp):
     if 1 in ALLOWED_IDS:
         logging.info('У вас указана 1 в ALLOWED_IDS. Это даёт доступ всем пользователям к пользовательским функциям')
 
-    if not (OWNERS_IDS and ALLOWED_IDS):
+    if not (OWNERS_IDS or ALLOWED_IDS):
         logging.warning('У вас не указано id админов и пользователей - бот не доступен никому.')
     if not OWNERS_IDS:
         logging.warning('У вас не указано id админов - админские функции не доступны никому.')
