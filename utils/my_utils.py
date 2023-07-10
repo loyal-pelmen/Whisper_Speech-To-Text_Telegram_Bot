@@ -10,7 +10,7 @@ from ujson import dump
 async def confupdate():
     with open('./config.json', 'w') as file:
         file.write('')
-        dump(config, file)
+        dump(config, file, indent=4)
 
 
 async def remove_token(token:str):

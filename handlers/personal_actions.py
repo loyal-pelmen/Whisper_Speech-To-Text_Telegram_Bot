@@ -30,13 +30,19 @@ async def help(msg: types.Message):
 /users - отправляет список пользователей.
 /addusers - добавляет пользователей.
 /rusers - удаляет пользователей.
+/groups - возвращает группы в которых бот работает для всех.
+/addgroups - добавляет группы в которых бот работает для всех.
+/rgroups - удаляет группы в которых бот работает для всех.
 /admins - отправляет список админов.
 /addadmins - добавляет админов.
 /radmins - удаляет админов.
 /tokens - отправляет количество токенов.
 /printtokens - отправляет список токенов.
 /addtokens - добавляет токены.
-/rtokens - удаляет токены.''', parse_mode='HTML')
+/rtokens - удаляет токены.
+
+<em>Добавив 1 в список групп, пользователей или админов, вы делаете бота общедоступным
+(добавив в список с админами, все пользователи получают права администраторов).</em>''', parse_mode='HTML')
 
 
 
@@ -64,7 +70,7 @@ async def who_is_users(message: types.Message):
     await message.delete()
     pre_msg = config['ALLOWED_IDS']
 
-    if not(1 in pre_msg):
+    if not(1 in pre_msg or 1 in config['ALLOWED_GROUPS_IDS']):
         if pre_msg:
             await message.answer(text=str(pre_msg)[1:-1])
         else:
@@ -99,11 +105,12 @@ async def add_users(message: types.Message):
         one = not (',' in text)
         if text:
             if one:
-                text = int(text.strip())
-                config['ALLOWED_IDS'].append(text)
+                text = text.strip()
+                if (text.isdigit() if not text.startswith('-') else text[1:].isdigit()) and int(text) not in config['ALLOWED_IDS']:
+                    config['ALLOWED_IDS'].append(int(text))
             else:
                 users = list(map(str.strip, text.split(',')))
-                new_users = [int(user) for user in users[::-1] if (user not in config['ALLOWED_IDS']) and user.isdigit()]
+                new_users = [int(user) for user in users if (user.isdigit() if not user.startswith('-') else user[1:].isdigit()) and (int(user) not in config['ALLOWED_IDS'])]
                 config['ALLOWED_IDS'].extend(new_users)
 
             await confupdate()
@@ -125,13 +132,11 @@ async def add_admins(message: types.Message):
         if text:
             if one:
                 text = text.strip()
-                if text.isdigit():
+                if (text.isdigit() if not text.startswith('-') else text[1:].isdigit()) and not(int(text) in config['OWNERS_IDS']):
                     config['OWNERS_IDS'].append(int(text))
-                else:
-                    exit()
             else:
                 admins = list(map(str.strip, text.split(',')))
-                new_users = [int(admin) for admin in admins[::-1] if (admin not in config['OWNERS_IDS']) and admin.isdigit()]
+                new_users = [int(admin) for admin in admins if (int(admin) not in config['OWNERS_IDS']) and (admin.isdigit() if not admin.startswith('-') else admin[1:].isdigit())]
                 config['OWNERS_IDS'].extend(new_users)
 
             await confupdate()
@@ -153,12 +158,12 @@ async def remome_admins(message: types.Message):
 
         if text:
             if one:
-                if text.isdigit():
+                if (text.isdigit() if not text.startswith('-') else text[1:].isdigit()) and int(text) in config['OWNERS_IDS']:
                     config['OWNERS_IDS'].remove(int(text))
                 else:
                     exit()
             else:
-                [config['OWNERS_IDS'].remove(user) for user in[int(id.strip()) for id in text.split(',') if id.strip().isdigit()] if user in config['OWNERS_IDS']]
+                [config['OWNERS_IDS'].remove(user) for user in[int(id.strip()) for id in text.split(',') if (id.strip().isdigit() if not id.strip().startswith('-') else id.strip()[1:].isdigit())] if user in config['OWNERS_IDS']]
 
 
             await confupdate()
@@ -181,12 +186,12 @@ async def remome_users(message: types.Message):
         if text:
             if one:
                 text = text.strip()
-                if text.isdigit():
+                if (text.isdigit() if not text.startswith('-') else text[1:].isdigit()) and int(text) in config['ALLOWED_IDS']:
                     config['ALLOWED_IDS'].remove(int(text))
                 else:
                     exit()
             else:
-                [config['ALLOWED_IDS'].remove(user) for user in[int(id.strip()) for id in text.split(',') if id.strip().isdigit()] if user in config['ALLOWED_IDS']]
+                [config['ALLOWED_IDS'].remove(user) for user in[int(id.strip()) for id in text.split(',') if (id.strip().isdigit() if not id.strip().startswith('-') else id.strip()[1:].isdigit())] if user in config['ALLOWED_IDS']]
 
 
             await confupdate()
@@ -266,7 +271,7 @@ async def num_of_tokens(message: types.Message):
 @dp.async_task
 async def print_tokens(message: types.Message):
     await message.delete()
-    await message.answer(text=', '.join(api))
+    await message.answer(text=str(api)[1:-1])
 
 
 
@@ -279,10 +284,11 @@ async def add_tokens(message: types.Message):
     if text:
         if one:
             text = text.strip()
-            config['OPENAI_TOKENS'].append(text)
+            if text not in config['OPENAI_TOKENS']:
+                config['OPENAI_TOKENS'].append(text)
         else:
             tokens = list(map(str.strip, text.split(',')))
-            new_tokens = [token for token in tokens[::-1] if (token not in config['OPENAI_TOKENS']) and (token != '')]
+            new_tokens = [token for token in tokens if not(token in config['OPENAI_TOKENS'])]
             config['OPENAI_TOKENS'].extend(new_tokens)
 
         await confupdate()
@@ -301,11 +307,12 @@ async def remome_tokens(message: types.Message):
     if text:
         if one:
             text = text.strip()
-            config['OPENAI_TOKENS'].remove(text)
+            if text in config['OPENAI_TOKENS']:
+                config['OPENAI_TOKENS'].remove(text)
         else:
             for token in text.split(','):
                 token = token.strip()
-                if token in config['OPENAI_TOKENS'] and token != '':
+                if token in config['OPENAI_TOKENS']:
                     config['OPENAI_TOKENS'].remove(token)
 
         await confupdate()
@@ -346,3 +353,74 @@ async def remove_log_bot(message: types.Message):
     config['LOG_BOT_TOKEN'] = ""
     await confupdate()
     await message.answer('Ключ для бота с логами удалён.')
+
+
+
+@dp.message_handler(IsOwner(), commands=['groups'])
+@dp.async_task
+async def who_is_groups(message: types.Message):
+    await message.delete()
+    pre_msg = config['ALLOWED_GROUPS_IDS']
+
+    if not(1 in pre_msg or 1 in config['ALLOWED_IDS']):
+        if pre_msg:
+            await message.answer(text=str(pre_msg)[1:-1])
+        else:
+            await message.answer(text='У вас нет групп.')
+    else:
+        await message.answer(text='У вас каждый - пользователь👏.')
+
+
+
+@dp.message_handler(IsOwner(), commands=['rgroups'])
+@dp.async_task
+async def remome_groups(message: types.Message):
+    try:
+        await message.delete()
+        text = (message.text[8:]).strip()
+        one = not (',' in text)
+
+        if text:
+            if one:
+                text = text.strip()
+                if (text.isdigit() if not text.startswith('-') else text[1:].isdigit()) and int(text) in config['ALLOWED_GROUPS_IDS']:
+                    config['ALLOWED_GROUPS_IDS'].remove(int(text))
+                else:
+                    exit()
+            else:
+                [config['ALLOWED_GROUPS_IDS'].remove(group) for group in [int(id.strip()) for id in text.split(',') if (id.strip().isdigit() if not id.strip().startswith('-') else id.strip()[1:].isdigit())] if group in config['ALLOWED_GROUPS_IDS']]
+
+
+            await confupdate()
+            await message.answer('Лишние id удалены!')
+        else:
+            await message.answer('Для того, чтобы воспользоваться этой функцией, сделайте отступ и добавьте id через запятую.')
+    except Exception as e:
+        await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
+        print(e)
+
+
+
+@dp.message_handler(IsOwner(), commands=['addgroups'])
+@dp.async_task
+async def add_groups(message: types.Message):
+    try:
+        await message.delete()
+        text = (message.text[10:]).strip()
+        one = not (',' in text)
+        if text:
+            if one:
+                text = text.strip()
+                if int(text) not in config['ALLOWED_GROUPS_IDS'] and (text.isdigit() if not text.startswith('-') else text[1:].isdigit()):
+                    config['ALLOWED_GROUPS_IDS'].append(int(text))
+            else:
+                users = list(map(str.strip, text.split(',')))
+                new_users = [int(user) for user in users if (user.isdigit() if not user.startswith('-') else user[1:].isdigit()) and not(int(user) in config['ALLOWED_GROUPS_IDS'])]
+                config['ALLOWED_GROUPS_IDS'].extend(new_users)
+
+            await confupdate()
+            await message.answer('Новые группы добавлены!')
+        else:
+            await message.answer('Для того, чтобы воспользоваться этой функцией, сделайте отступ и добавьте id групп через запятую.')
+    except:
+        await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')

@@ -8,6 +8,7 @@ BOT_TOKEN = str(config['BOT_TOKEN'])
 LOG_BOT_TOKEN = str(config['LOG_BOT_TOKEN']) 
 ALLOWED_IDS = list(config['ALLOWED_IDS'])
 OWNERS_IDS = list(config['OWNERS_IDS'])
+ALLOWED_GROUPS_IDS = list(config['ALLOWED_GROUPS_IDS'])
 
 WEBHOOK = bool(config['WEBHOOK'])
 WEBHOOK_HOST = str(config['WEBHOOK_HOST'])
