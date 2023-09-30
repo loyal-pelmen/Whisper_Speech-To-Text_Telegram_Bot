@@ -1,6 +1,6 @@
-aiogram
-openai
-soundfile
-pydub
-ujson
-moviepy
+aiogram==2.25.1
+openai==0.28.1
+soundfile==0.12.1
+pydub==0.25.1
+ujson==5.8.0
+moviepy==1.0.3

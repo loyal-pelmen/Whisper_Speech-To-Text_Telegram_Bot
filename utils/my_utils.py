@@ -27,7 +27,7 @@ def split_text(text:str, chunk_size:int) -> list[str]:
         else:
             chunks.append(text)
             text = ''
-    return chunks[::-1]
+    return chunks
 
 
 async def send_err_log(message):
