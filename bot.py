@@ -15,4 +15,4 @@ if __name__ == "__main__":
         host=WEBAPP_HOST,
         port=WEBAPP_PORT)
     else:
-        start_polling(dp, skip_updates=True, on_startup=start, on_shutdown=stop)  # Не пропускайте обновления, если ваш бот будет обрабатывать платежи или другие важные вещи.
+        start_polling(dp, skip_updates=True, on_startup=start, on_shutdown=stop)
