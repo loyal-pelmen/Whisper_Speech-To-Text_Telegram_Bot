@@ -1,0 +1,5 @@
+version: "3.9"
+
+services:
+  whisper:
+    image: whisper_bot
