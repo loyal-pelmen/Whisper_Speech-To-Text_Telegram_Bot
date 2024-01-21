@@ -1,6 +1,7 @@
 aiogram==2.25.2
-openai==0.28.1
+openai==1.8.0
 soundfile==0.12.1
 pydub==0.25.1
 ujson==5.8.0
 moviepy==1.0.3
+httpx==0.26.0

@@ -3,7 +3,7 @@ from ujson import load
 with open('./config.json', 'r') as config_file:
     config = load(config_file)
 
-
+PROXY = str(config['PROXY'])
 BOT_TOKEN = str(config['BOT_TOKEN'])
 LOG_BOT_TOKEN = str(config['LOG_BOT_TOKEN']) 
 ALLOWED_IDS = list(config['ALLOWED_IDS'])

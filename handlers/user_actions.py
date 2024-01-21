@@ -9,7 +9,7 @@ from dispatcher import dp, bot
 from filters import IsUser
 from aiogram import types
 from pathlib import Path
-from config import OPENAI_TOKENS
+from config import OPENAI_TOKENS, PROXY
 from moviepy.editor import VideoFileClip
 from utils.my_utils import remove_token, split_text, send_err_log
 
@@ -56,7 +56,7 @@ async def voice_message_handle(message: types.Message):
                     pydub.AudioSegment.from_file(voice_ogg_path).export(voice_mp3_path, format="mp3")
                     # transcribe
                     with open(voice_mp3_path, "rb") as f:
-                        transcribed_text = await transcribe_audio(f)
+                        transcribed_text = await transcribe_audio(audio_file=f, token=i, proxy=PROXY)
 
                         if transcribed_text is None:
                             exit()
@@ -136,7 +136,7 @@ async def video_message_handle(message: types.Message):
 
                     # transcribe
                     with open(audio_path, "rb") as f:
-                        transcribed_text = await transcribe_audio(f)
+                        transcribed_text = await transcribe_audio(audio_file=f, token=i, proxy=PROXY)
 
                         if transcribed_text is None:
                             exit()

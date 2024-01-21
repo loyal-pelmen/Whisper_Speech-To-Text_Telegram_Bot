@@ -4,7 +4,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from filters import IsOwner, IsUser
 from logging.handlers import RotatingFileHandler
-from config import BOT_TOKEN, WEBHOOK_HOST, WEBHOOK, MAXCONNECTIONS, UPDATESPENDING, LOG_LEVEL, OWNERS_IDS, ALLOWED_IDS
+from config import BOT_TOKEN, WEBHOOK_HOST, WEBHOOK, MAXCONNECTIONS, UPDATESPENDING, LOG_LEVEL, OWNERS_IDS, ALLOWED_IDS, PROXY
 
 
 # Настроить ведение журнала

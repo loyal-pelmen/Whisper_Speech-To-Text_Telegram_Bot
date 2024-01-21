@@ -20,6 +20,8 @@ async def help(msg: types.Message):
 <b>Функции для Админов:</b>
 
 /restart - перезапуск бота.
+/changeproxy - меняет прокси (нужна перезагрузка для применения).
+/rproxy - удаляет прокси (нужна перезагрузка).
 /gitupdate - обновляет бота до последней версии.
 /gitback - возвращает версию на n версий назад от последней.
 /log - отправляет файл с логами.
@@ -422,5 +424,48 @@ async def add_groups(message: types.Message):
             await message.answer('Новые группы добавлены!')
         else:
             await message.answer('Для того, чтобы воспользоваться этой функцией, сделайте отступ и добавьте id групп через запятую.')
+    except:
+        await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
+
+
+@dp.message_handler(IsOwner(), commands=['changeproxy'])
+@dp.async_task
+async def change_proxy(message: types.Message):
+    try:
+        await message.delete()
+        text = (message.text[12:]).strip()
+
+        if text:
+            if text  == config['PROXY']:
+                await message.answer('Ваш текущий прокси идентичен предоставленному.')
+            else:
+                config['PROXY'] = text
+
+                await confupdate()
+                await message.answer('Прокси успешно обновлён!')
+
+        else:
+            await message.answer('Для того, чтобы эта функция работала, вам необходимо предоставить ссылку на http прокси в формате http://ЛОГИН:ПАРОЛЬ@IP:ПОРТ')
+
+
+    except:
+        await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
+
+
+
+@dp.message_handler(IsOwner(), commands=['rproxy'])
+@dp.async_task
+async def rproxy(message: types.Message):
+    try:
+        await message.delete()
+        
+        if config['PROXY'] != "":
+            config['PROXY'] = ""
+            await confupdate()
+
+            await message.answer('Прокси успешно удалён.')
+
+        else:
+            await message.answer('У вас нет прокси для удаления.')
     except:
         await message.answer('Что-то не так... Проверьте что написали и повторите попытку.')
