@@ -9,3 +9,4 @@ services:
       - ./:/usr/src/app
     ports:
       - "8443:8443"
+    restart: always
