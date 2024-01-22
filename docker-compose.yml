@@ -2,4 +2,10 @@ version: "3.9"
 
 services:
   whisper:
-    image: whisper_bot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config.json:/usr/src/app/config.json
+    ports:
+      - "8443:8443"
